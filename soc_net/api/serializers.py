@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from soc_net.models import Comment, Post, Reaction, User
+from soc_net.models import Chat, Comment, Post, Reaction, User
+from django.db.models import Q
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -186,3 +187,29 @@ class ReactionSerializer(serializers.ModelSerializer):
         reaction.save()
 
         return reaction
+
+
+class ChatSerializer(serializers.ModelSerializer):
+    user_1 = serializers.HiddenField(
+        default=serializers.CurrentUserDefault(),
+    )
+
+    class Meta:
+        model = Chat
+        fields = ("user_1", "user_2")
+
+    def create(self, validated_data):
+        request_user = validated_data["user_1"]
+        second_user = validated_data["user_2"]
+
+        chat = Chat.objects.filter(
+            Q(user_1=request_user, user_2=second_user)
+            | Q(user_1=second_user, user_2=request_user)
+        ).first()
+        if not chat:
+            chat = Chat.objects.create(
+                user_1=request_user,
+                user_2=second_user,
+            )
+
+        return chat

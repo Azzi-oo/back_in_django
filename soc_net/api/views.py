@@ -1,6 +1,6 @@
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, DestroyModelMixin
-from soc_net.api.serializers import CommentSerializer, PostCreateUpdateSerializer, PostListSerializer, PostRetrieveSerializer, UserRegistrationSerializer, UserListSerializer, UserRetrieveSerializer
+from soc_net.api.serializers import ChatSerializer, CommentSerializer, PostCreateUpdateSerializer, PostListSerializer, PostRetrieveSerializer, ReactionSerializer, UserRegistrationSerializer, UserListSerializer, UserRetrieveSerializer
 from soc_net.models import Comment, Post, User
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
@@ -111,3 +111,19 @@ class CommentViewSet(
         if instance.author != self.request.user:
             raise PermissionDenied("Ты не автор этого коммента")
         instance.delete()
+
+
+class ReactionViewSet(
+    CreateModelMixin,
+    GenericViewSet,
+):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ReactionSerializer
+
+
+class ChatViewSet(
+    CreateModelMixin,
+    GenericViewSet,
+):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChatSerializer
