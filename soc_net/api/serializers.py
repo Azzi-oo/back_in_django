@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from soc_net.models import Chat, Comment, Post, Reaction, User
+from soc_net.models import Chat, Comment, Message, Post, Reaction, User
 from django.db.models import Q
 
 
@@ -213,3 +213,11 @@ class ChatSerializer(serializers.ModelSerializer):
             )
 
         return chat
+
+
+class MessageListSerializer(serializers.ModelSerializer):
+    message_author = serializers.CharField()
+
+    class Meta:
+        model = Message
+        fields = ("id", "content", "message_author", "created_at")
